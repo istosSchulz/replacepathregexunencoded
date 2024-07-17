@@ -1,9 +1,9 @@
-displayName: ReplacePathFromURLRegex Plugin
+displayName: ReplacePathRegexUnencoded Plugin
 type: middleware
 
-import: github.com/rocdove/replacepathfromurlregex
+import: github.com/istosSchulz/replacepathregexunencoded
 
-summary: '[ReplacePathFromURLRegex] Replace Path From URL Regex'
+summary: '[ReplacePathRegexUnencoded] Replace Path From URL Regex'
 
 testData:
   regex: "^https?://([a-z]+).demo.localhost(:[0-9]+)?/prefix/(.*?)$"

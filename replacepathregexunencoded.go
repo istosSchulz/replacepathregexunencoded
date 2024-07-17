@@ -16,7 +16,7 @@ import (
 const (
 	// ReplacedPathHeader is the default header to set the old path to.
 	ReplacedPathHeader = "X-Replaced-Path"
-	typeName           = "ReplacePathFromURLRegex"
+	typeName           = "ReplacePathRegexUnencoded"
 )
 
 // Config the plugin configuration.
@@ -30,8 +30,8 @@ func CreateConfig() *Config {
 	return &Config{}
 }
 
-// ReplacePathFromURLRegex a traefik plugin.
-type ReplacePathFromURLRegex struct {
+// ReplacePathRegexUnencodedRegex a traefik plugin.
+type ReplacePathRegexUnencodedRegex struct {
 	next        http.Handler
 	name        string
 	regexp      *regexp.Regexp
@@ -44,7 +44,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 	if err != nil {
 		return nil, fmt.Errorf("error compiling regular expression %s: %w", config.Regex, err)
 	}
-	return &ReplacePathFromURLRegex{
+	return &ReplacePathRegexUnencodedRegex{
 		next:        next,
 		name:        name,
 		regexp:      exp,
@@ -52,7 +52,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 	}, nil
 }
 
-func (r *ReplacePathFromURLRegex) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+func (r *ReplacePathRegexUnencodedRegex) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	oldURL := rawURL(req)
 
 	var currentPath string

@@ -2,28 +2,28 @@ package plugindemo_test
 
 import (
 	"context"
-	"github.com/traefik/plugindemo"
+	"github.com/istosSchulz/replacepathregexunencoded"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func TestReplacePathFromUrlRegex(t *testing.T) {
-	cfg := plugindemo.CreateConfig()
-	cfg.Regex = "^/api/([^/]+)/websockets/(import/progress)$"
+func TestReplacePathRegexUnencoded(t *testing.T) {
+	cfg := replacepathregexunencoded.CreateConfig()
+	cfg.Regex = "/api/([^/]+)/websockets/(import/progress)$"
 	cfg.Replacement = "/datacenter/$2?tenantId=$1"
 
 	ctx := context.Background()
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
 
-	handler, err := plugindemo.New(ctx, next, cfg, "replacePathFromURLRegex-plugin")
+	handler, err := replacepathregexunencoded.New(ctx, next, cfg, "replacePathFromURLRegex-plugin")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	recorder := httptest.NewRecorder()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.planning.cloud/api/75cf3229-9763-47c5-9789-b2e3c7fa8051/websockets/import/progress", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "wss://api.istos.io/api/138f5014-b17d-4964-81cb-07191ec822eb/websockets/import/progress", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
