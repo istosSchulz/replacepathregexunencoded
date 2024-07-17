@@ -1,4 +1,4 @@
-package plugindemo_test
+package replacepathregexunencoded_test
 
 import (
 	"context"
