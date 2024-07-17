@@ -18,3 +18,6 @@ vendor:
 
 clean:
 	rm -rf ./vendor
+
+tidy:
+	go mod tidy

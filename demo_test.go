@@ -2,48 +2,49 @@ package plugindemo_test
 
 import (
 	"context"
+	"github.com/traefik/plugindemo"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/traefik/plugindemo"
 )
 
-func TestDemo(t *testing.T) {
+func TestReplacePathFromUrlRegex(t *testing.T) {
 	cfg := plugindemo.CreateConfig()
-	cfg.Headers["X-Host"] = "[[.Host]]"
-	cfg.Headers["X-Method"] = "[[.Method]]"
-	cfg.Headers["X-URL"] = "[[.URL]]"
-	cfg.Headers["X-URL"] = "[[.URL]]"
-	cfg.Headers["X-Demo"] = "test"
+	cfg.Regex = "^/api/([^/]+)/websockets/(import/progress)$"
+	cfg.Replacement = "/datacenter/$2?tenantId=$1"
 
 	ctx := context.Background()
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
 
-	handler, err := plugindemo.New(ctx, next, cfg, "demo-plugin")
+	handler, err := plugindemo.New(ctx, next, cfg, "replacePathFromURLRegex-plugin")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	recorder := httptest.NewRecorder()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.planning.cloud/api/75cf3229-9763-47c5-9789-b2e3c7fa8051/websockets/import/progress", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	handler.ServeHTTP(recorder, req)
 
-	assertHeader(t, req, "X-Host", "localhost")
-	assertHeader(t, req, "X-URL", "http://localhost")
-	assertHeader(t, req, "X-Method", "GET")
-	assertHeader(t, req, "X-Demo", "test")
+	assertPath(t, req, "/a/uri")
+
 }
 
-func assertHeader(t *testing.T, req *http.Request, key, expected string) {
+func assertPath(t *testing.T, req *http.Request, expected string) {
 	t.Helper()
 
-	if req.Header.Get(key) != expected {
-		t.Errorf("invalid header value: %s", req.Header.Get(key))
+	var currentPath string
+	if req.URL.RawPath == "" {
+		currentPath = req.URL.Path
+	} else {
+		currentPath = req.URL.RawPath
+	}
+
+	if currentPath != expected {
+		t.Errorf("invalid RawPath value: %s, expected: %s", currentPath, expected)
 	}
 }

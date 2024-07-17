@@ -1,12 +1,10 @@
-displayName: Demo Plugin
+displayName: ReplacePathFromURLRegex Plugin
 type: middleware
-iconPath: .assets/icon.png
 
-import: github.com/traefik/plugindemo
+import: github.com/rocdove/replacepathfromurlregex
 
-summary: '[Demo] Add Request Header'
+summary: '[ReplacePathFromURLRegex] Replace Path From URL Regex'
 
 testData:
-  Headers:
-    X-Demo: test
-    X-URL: '{{URL}}'
+  regex: "^https?://([a-z]+).demo.localhost(:[0-9]+)?/prefix/(.*?)$"
+  replacement: /${1}/${3}
